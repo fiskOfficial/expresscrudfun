@@ -24,3 +24,11 @@ POST /api/tasks 1690889334596
 POST /api/tasks 1690889365710
 PUT /api/tasks/vpmecad9e6g/ 1690890552564
 PUT /api/tasks/vpmecad9e6g/ 1690890597910
+PUT /api/tasks/vpmecad9e6g/ 1690894487509
+PUT /api/tasks/0.9eubj0hv4jt/ 1690894545878
+DELETE /api/tasks/0.9eubj0hv4jt/ 1690895626325
+DELETE /api/tasks/0.9eubj0hv4jt/ 1690895687044
+DELETE /api/tasks/pitnev354u/ 1690895708569
+DELETE /api/tasks/a/ 1690895748550
+PUT /api/tasks/vpmecad9e6g/ 1690896801726
+PUT /api/tasks/vpmecad9e6g/ 1690897135306

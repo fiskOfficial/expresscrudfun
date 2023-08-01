@@ -19,7 +19,7 @@ app.use(express.json());
 
 async function HTTPlogger (req,res,next) {
     const line = `${req.method} ${req.url} ${Date.now()}\n`;
-    log.magenta(line);
+    // log.magenta(line);
     await fs.appendFile('./logs/http.log', line);
     next();
 };
@@ -62,7 +62,7 @@ app.get("/api/tasks/:id",async (req, res) => {
   return res.status(404).send(`no task exies under that ${req.params.id} id`)
 });
 
-app.put("/api/tasks/:id", async (req, res) => {
+app.patch("/api/tasks/:id", async (req, res) => {
   const content = await fs.readFile(`./db/tasks.json`, 'utf8');
   const tasks = JSON.parse(content);
 
@@ -71,13 +71,8 @@ app.put("/api/tasks/:id", async (req, res) => {
     return res.status(404).json({ message: 'Task not found' });
   }
 
-  // Update the properties of objByID with the ones from req.body
-  objByID.title = req.body.title;
-  objByID.description = req.body.description;
-  objByID.time_stemp = req.body.time_stemp;
-  // Add any other properties that you want to update
+  Object.assign(objByID, req.body);
 
-  // Write the updated tasks array back to the JSON file
   const updatedContent = JSON.stringify(tasks, null, 2);
   await fs.writeFile(`./db/tasks.json`, updatedContent, 'utf8');
 
@@ -85,13 +80,52 @@ app.put("/api/tasks/:id", async (req, res) => {
 });
 
 
-app.patch("/api/tasks/:id", (req, res) => {
+app.put("/api/tasks/:id",async (req, res) => {
+  
+  const content = await fs.readFile(`./db/tasks.json`, 'utf8');
+  const tasks = JSON.parse(content);
+
+  const objByID = tasks.find((obj) => obj.id === req.params.id);
+  if (!objByID) {
+    return res.status(404).json({ message: 'Task not found' });
+  }
+
+
   res.status(200).send(`update (patch) a task - by id - PUT - api/tasks/${req.params.id}`)
 });
 
-app.delete("/api/tasks/:id/", (req, res) => {
-  res.status(200).send(`delete a task - by id - DELETE - api/tasks/${req.params.id}`)
+// app.delete("/api/tasks/:id/",async (req, res) => {
+
+//   const content = await fs.readFile(`./db/tasks.json`, 'utf8');
+//   const tasks = JSON.parse(content);
+//   const objByID = tasks.find((obj) => obj.id === req.params.id);
+//    if (!objByID) {
+//     return res.status(404).json({ message: 'Task not found' });
+//   }
+
+
+//   res.status(200).send(`delete a task - by id - DELETE - api/tasks/${req.params.id}`)
+// });
+
+app.delete("/api/tasks/:id", async (req, res) => {
+
+  const content = await fs.readFile(`./db/tasks.json`, 'utf8');
+  const tasks = JSON.parse(content);
+
+  const index = tasks.findIndex((obj) => obj.id === req.params.id);
+  if (index === -1) {
+    return res.status(404).json({ message: 'Task not found' });
+  }
+
+  tasks.splice(index, 1);
+
+  const updatedContent = JSON.stringify(tasks, null, 2);
+  await fs.writeFile(`./db/tasks.json`, updatedContent, 'utf8');
+
+  res.status(200).json({ message: `Task with id ${req.params.id} has been deleted` });
 });
+
+
 
 
 // start the server
